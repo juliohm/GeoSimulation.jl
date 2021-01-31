@@ -3,11 +3,33 @@ uuid = "220efe8a-9139-4e14-a4fa-f683d572f4c5"
 authors = ["Júlio Hoffimann <julio.hoffimann@gmail.com> and contributors"]
 version = "0.1.0"
 
+[deps]
+CpuId = "adafc99b-e345-5852-983c-f28acb93d879"
+Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
+FFTW = "7a1cc6ca-52ef-59f5-83cd-3a7055c09341"
+GeoStatsBase = "323cb8eb-fbf6-51c0-afd0-f8fba70507b2"
+KrigingEstimators = "d293930c-a38c-56c5-8ebb-12008647b47a"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
+Variography = "04a0146e-e6df-5636-8d7f-62fa9eb0b20c"
+
 [compat]
-julia = "1"
+CpuId = "0.2, 0.3"
+Distributions = "0.23, 0.24"
+FFTW = "1.2"
+GeoStatsBase = "0.17"
+KrigingEstimators = "0.5"
+Variography = "0.10"
+julia = "1.4"
 
 [extras]
+ImageMagick = "6218d12a-5da1-5696-b52f-db25d2ecc6d1"
+Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
+Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
+QuartzImageIO = "dca85d43-d64c-5e67-8c65-017450d5d020"
+Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+VisualRegressionTests = "34922c18-7c2a-561c-bac1-01e79b2c4c92"
 
 [targets]
-test = ["Test"]
+test = ["ImageMagick", "Pkg", "Plots", "QuartzImageIO", "Random", "Test", "VisualRegressionTests"]

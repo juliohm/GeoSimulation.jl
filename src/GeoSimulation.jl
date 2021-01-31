@@ -1,5 +1,24 @@
+# ------------------------------------------------------------------
+# Licensed under the MIT License. See LICENCE in the project root.
+# ------------------------------------------------------------------
+
 module GeoSimulation
 
-# Write your package code here.
+using GeoStatsBase
+using Variography
+using KrigingEstimators
+using Distributions
+using LinearAlgebra
+using Statistics
+using FFTW
+using CpuId
+
+import GeoStatsBase: preprocess, solvesingle
+
+include("lu.jl")
+include("fft.jl")
+include("seq.jl")
+
+export LUGS, FFTGS, SGS
 
 end
