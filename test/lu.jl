@@ -12,7 +12,7 @@
   solution = solve(problem, solver)
 
   if visualtests
-    @plottest plot(solution,size=(600,400),layout=(2,1)) joinpath(datadir,"LU-condsim.png") !isCI
+    @test_ref_plot "data/LU-condsim.png" plot(solution,size=(600,400),layout=(2,1))
   end
 
   # ------------------------
@@ -25,7 +25,7 @@
   solution = solve(problem, solver)
 
   if visualtests
-    @plottest plot(solution,size=(600,400),layout=(2,1)) joinpath(datadir,"LU-uncondsim.png") !isCI
+    @test_ref_plot "data/LU-uncondsim.png" plot(solution,size=(600,400),layout=(2,1))
   end
 
   # -------------
@@ -41,6 +41,6 @@
   solution = solve(problem, solver)
 
   if visualtests
-    @plottest plot(solution,size=(600,400),layout=(2,1)) joinpath(datadir,"LU-cosim.png") !isCI
+    @test_ref_plot "data/LU-cosim.png" plot(solution,size=(600,400),layout=(2,1))
   end
 end
