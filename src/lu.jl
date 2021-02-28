@@ -95,7 +95,7 @@ function preprocess(problem::SimulationProblem, solver::LUGS)
       end
 
       # retrieve simulation locations
-      slocs = [l for l in 1:nelms(pdomain) if l ∉ dlocs]
+      slocs = [l for l in 1:nelements(pdomain) if l ∉ dlocs]
 
       # covariance between simulation locations
       C₂₂ = sill(γ) .- pairwise(γ, pdomain, slocs)
@@ -148,7 +148,7 @@ function preprocess(problem::SimulationProblem, solver::LUGS)
   preproc
 end
 
-function solvesingle(problem::SimulationProblem, covars::NamedTuple,
+function solvesingle(::SimulationProblem, covars::NamedTuple,
                      solver::LUGS, preproc)
   # preprocessed parameters
   conames = covars.names

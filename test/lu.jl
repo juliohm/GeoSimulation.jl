@@ -1,6 +1,6 @@
 @testset "LUGS" begin
   𝒮 = georef((z=[0.,1.,0.,1.,0.],), [0. 25. 50. 75. 100.])
-  𝒟 = RegularGrid(100)
+  𝒟 = CartesianGrid(100)
 
   # ----------------------
   # conditional simulation
@@ -12,7 +12,7 @@
   solution = solve(problem, solver)
 
   if visualtests
-    @test_ref_plot "data/LU-condsim.png" plot(solution,size=(600,400),layout=(2,1))
+    @test_reference "data/LU-condsim.png" plot(solution,size=(600,400),layout=(2,1))
   end
 
   # ------------------------
@@ -25,13 +25,13 @@
   solution = solve(problem, solver)
 
   if visualtests
-    @test_ref_plot "data/LU-uncondsim.png" plot(solution,size=(600,400),layout=(2,1))
+    @test_reference "data/LU-uncondsim.png" plot(solution,size=(600,400),layout=(2,1))
   end
 
   # -------------
   # co-simulation
   # -------------
-  𝒟 = RegularGrid(500)
+  𝒟 = CartesianGrid(500)
   problem = SimulationProblem(𝒟, (:z=>Float64,:y=>Float64), 1)
   solver = LUGS(:z => (variogram=SphericalVariogram(range=10.),),
                 :y => (variogram=GaussianVariogram(range=10.),),
@@ -41,6 +41,6 @@
   solution = solve(problem, solver)
 
   if visualtests
-    @test_ref_plot "data/LU-cosim.png" plot(solution,size=(600,400),layout=(2,1))
+    @test_reference "data/LU-cosim.png" plot(solution,size=(600,400),layout=(2,1))
   end
 end

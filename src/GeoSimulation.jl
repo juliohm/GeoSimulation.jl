@@ -4,9 +4,11 @@
 
 module GeoSimulation
 
+using Meshes
 using GeoStatsBase
 using Variography
 using KrigingEstimators
+
 using Distributions
 using LinearAlgebra
 using Statistics

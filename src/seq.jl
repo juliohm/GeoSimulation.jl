@@ -59,7 +59,7 @@ function preprocess(problem::SimulationProblem, solver::SGS)
       if varparams.drifts ≠ nothing
         estimator = ExternalDriftKriging(varparams.variogram, varparams.drifts)
       elseif varparams.degree ≠ nothing
-        estimator = UniversalKriging(varparams.variogram, varparams.degree, ncoords(pdomain))
+        estimator = UniversalKriging(varparams.variogram, varparams.degree, embeddim(pdomain))
       elseif varparams.mean ≠ nothing
         estimator = SimpleKriging(varparams.variogram, varparams.mean)
       else
@@ -70,7 +70,7 @@ function preprocess(problem::SimulationProblem, solver::SGS)
       marginal = Normal()
 
       # determine simulation path
-      path = varparams.path ≠ nothing ? varparams.path : LinearPath()
+      path = varparams.path ≠ nothing ? varparams.path : RandomPath()
 
       # determine data mapping
       mapping = varparams.mapping

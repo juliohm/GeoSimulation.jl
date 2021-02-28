@@ -32,7 +32,7 @@ function preprocess(problem::SimulationProblem, solver::FFTGS)
   
   # retrieve problem info
   pdomain = domain(problem)
-  npts = nelms(pdomain)
+  npts = nelements(pdomain)
   dims = size(pdomain)
   center = CartesianIndex(dims .÷ 2)
   c = LinearIndices(dims)[center]
