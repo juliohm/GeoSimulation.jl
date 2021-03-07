@@ -15,12 +15,22 @@ using Statistics
 using FFTW
 using CpuId
 
-import GeoStatsBase: preprocess, solvesingle
+import GeoStatsBase: preprocess, solve, solvesingle
 
 include("lu.jl")
 include("fft.jl")
 include("seq.jl")
+include("sgs.jl")
+include("cookie.jl")
 
-export LUGS, FFTGS, SGS
+export
+  # generic solvers
+  SeqSim,
+
+  # concrete solvers
+  LUGS, FFTGS, SGS,
+
+  # meta solvers
+  CookieCutter
 
 end

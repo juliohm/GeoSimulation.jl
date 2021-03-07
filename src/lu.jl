@@ -87,8 +87,8 @@ function preprocess(problem::SimulationProblem, solver::LUGS)
       end
 
       # retrieve data locations in domain and data values
-      dlocs = Vector{Int}()
-      z₁ = Vector{V}()
+      dlocs = Int[]
+      z₁ = V[]
       for (loc, dloc) in vmapping
         push!(dlocs, loc)
         push!(z₁, pdata[var][dloc])
@@ -97,16 +97,20 @@ function preprocess(problem::SimulationProblem, solver::LUGS)
       # retrieve simulation locations
       slocs = [l for l in 1:nelements(pdomain) if l ∉ dlocs]
 
+      # create views of the domain
+      𝒟d = view(pdomain, dlocs)
+      𝒟s = view(pdomain, slocs)
+
       # covariance between simulation locations
-      C₂₂ = sill(γ) .- pairwise(γ, pdomain, slocs)
+      C₂₂ = sill(γ) .- pairwise(γ, 𝒟s)
 
       if isempty(dlocs)
         d₂  = zero(V)
         L₂₂ = cholesky(Symmetric(C₂₂)).L
       else
         # covariance beween data locations
-        C₁₁ = sill(γ) .- pairwise(γ, pdomain, dlocs)
-        C₁₂ = sill(γ) .- pairwise(γ, pdomain, dlocs, slocs)
+        C₁₁ = sill(γ) .- pairwise(γ, 𝒟d)
+        C₁₂ = sill(γ) .- pairwise(γ, 𝒟d, 𝒟s)
 
         L₁₁ = cholesky(Symmetric(C₁₁)).L
         B₁₂ = L₁₁ \ C₁₂

@@ -61,7 +61,9 @@ function preprocess(problem::SimulationProblem, solver::FFTGS)
       @assert isstationary(γ) "variogram model must be stationary"
 
       # compute covariances between centroid and all locations
-      covs = sill(γ) .- pairwise(γ, pdomain, [c], 1:npts)
+      𝒟c = view(pdomain, [c])
+      𝒟p = view(pdomain, 1:npts)
+      covs = sill(γ) .- pairwise(γ, 𝒟c, 𝒟p)
       C = reshape(covs, dims)
 
       # move to frequency domain

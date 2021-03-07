@@ -12,7 +12,7 @@
   solution = solve(problem, solver)
 
   if visualtests
-    @test_reference "data/LU-condsim.png" plot(solution,size=(600,400),layout=(2,1))
+    @test_reference "data/LU-condsim.png" plot(solution,layout=(2,1))
   end
 
   # ------------------------
@@ -25,7 +25,7 @@
   solution = solve(problem, solver)
 
   if visualtests
-    @test_reference "data/LU-uncondsim.png" plot(solution,size=(600,400),layout=(2,1))
+    @test_reference "data/LU-uncondsim.png" plot(solution,layout=(2,1))
   end
 
   # -------------
@@ -41,6 +41,6 @@
   solution = solve(problem, solver)
 
   if visualtests
-    @test_reference "data/LU-cosim.png" plot(solution,size=(600,400),layout=(2,1))
+    @test_reference "data/LU-cosim.png" plot(solution,layout=(2,1))
   end
 end

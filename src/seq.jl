@@ -3,92 +3,149 @@
 # ------------------------------------------------------------------
 
 """
-    SGS(var₁=>param₁, var₂=>param₂, ...)
+    SeqSim(var₁=>param₁, var₂=>param₂, ...)
 
-Sequential Gaussian simulation.
+A sequential simulation solver.
+
+For each location in the simulation `path`, a maximum number
+of neighbors `maxneighbors` is used to fit a distribution.
+The neighbors are searched according to a `neighborhood`,
+and in case there are none, use a `marginal` distribution.
 
 ## Parameters
 
-* `variogram` - Variogram model (default to `GaussianVariogram()`)
-* `mean`      - Simple Kriging mean
-* `degree`    - Universal Kriging degree
-* `drifts`    - External Drift Kriging drift functions
-
-Latter options override former options. For example, by specifying
-`drifts`, the user is telling the algorithm to ignore `degree` and
-`mean`. If no option is specified, Ordinary Kriging is used by
-default with the `variogram` only.
-
-* `neighborhood` - Neighborhood on which to search neighbors
-* `maxneighbors` - Maximum number of neighbors (default to 10)
-* `path`         - Simulation path (default to `LinearPath()`)
-* `mapping`      - Data mapping method (default to `NearestMapping()`)
-
-For each location in the simulation `path`, a maximum number of
-neighbors `maxneighbors` is used to fit a Gaussian distribution.
-The neighbors are searched according to a `neighborhood`.
-
-### References
-
-Gomez-Hernandez & Journel 1993. *Joint Sequential Simulation of
-MultiGaussian Fields*
+* `estimator`    - CDF estimator
+* `neighborhood` - Spatial neighborhood
+* `maxneighbors` - Maximum number of neighbors
+* `marginal`     - Marginal distribution
+* `path`         - Simulation path
+* `mapping`      - Data mapping method
 """
-@simsolver SGS begin
-  @param variogram = GaussianVariogram()
-  @param mean = nothing
-  @param degree = nothing
-  @param drifts = nothing
+@simsolver SeqSim begin
+  @param estimator
   @param neighborhood
-  @param minneighbors = 1
-  @param maxneighbors = 10
-  @param path = nothing
-  @param mapping = NearestMapping()
+  @param minneighbors
+  @param maxneighbors
+  @param marginal
+  @param path
+  @param mapping
 end
 
-function preprocess(problem::SimulationProblem, solver::SGS)
+function preprocess(problem::SimulationProblem, solver::SeqSim)
   # retrieve problem info
+  pdata = data(problem)
   pdomain = domain(problem)
 
-  params = []
+  # result of preprocessing
+  preproc = Dict{Symbol,NamedTuple}()
+
   for covars in covariables(problem, solver)
     for var in covars.names
       # get user parameters
       varparams = covars.params[(var,)]
 
-      # determine which Kriging variant to use
-      if varparams.drifts ≠ nothing
-        estimator = ExternalDriftKriging(varparams.variogram, varparams.drifts)
-      elseif varparams.degree ≠ nothing
-        estimator = UniversalKriging(varparams.variogram, varparams.degree, embeddim(pdomain))
-      elseif varparams.mean ≠ nothing
-        estimator = SimpleKriging(varparams.variogram, varparams.mean)
+      # determine minimum/maximum number of neighbors
+      minneighbors = varparams.minneighbors
+      maxneighbors = varparams.maxneighbors
+
+      # determine neighbor search method
+      neigh     = varparams.neighborhood
+      searcher  = NeighborhoodSearch(pdomain, neigh)
+      bsearcher = BoundedSearch(searcher, maxneighbors)
+
+      # determine data mappings
+      vmappings = if hasdata(problem)
+        map(pdata, pdomain, (var,), varparams.mapping)[var]
       else
-        estimator = OrdinaryKriging(varparams.variogram)
+        Dict()
       end
 
-      # determine marginal distribution
-      marginal = Normal()
-
-      # determine simulation path
-      path = varparams.path ≠ nothing ? varparams.path : RandomPath()
-
-      # determine data mapping
-      mapping = varparams.mapping
-
-      # equivalent parameters for SeqSim solver
-      param = (estimator=estimator,
-               neighborhood=varparams.neighborhood,
-               minneighbors=varparams.minneighbors,
-               maxneighbors=varparams.maxneighbors,
-               marginal=marginal, path=path,
-               mapping=mapping)
-
-      push!(params, var => param)
+      # save preprocessed input
+      preproc[var] = (estimator=varparams.estimator,
+                      minneighbors=minneighbors,
+                      maxneighbors=maxneighbors,
+                      marginal=varparams.marginal,
+                      path=varparams.path,
+                      bsearcher=bsearcher,
+                      mappings=vmappings)
     end
   end
 
-  preprocess(problem, SeqSim(params...))
+  preproc
 end
 
-solvesingle(problem::SimulationProblem, covars::NamedTuple, ::SGS, preproc) =
-  solvesingle(problem, covars, SeqSim(), preproc)
+function solvesingle(problem::SimulationProblem, covars::NamedTuple, ::SeqSim, preproc)
+  # retrieve problem info
+  pdata = data(problem)
+  pdomain = domain(problem)
+
+  mactypeof = Dict(name(v) => mactype(v) for v in variables(problem))
+
+  varreals = map(covars.names) do var
+    # unpack preprocessed parameters
+    estimator, minneighbors, maxneighbors,
+    marginal, path, bsearcher, mappings = preproc[var]
+
+    # determine value type
+    V = mactypeof[var]
+
+    # pre-allocate memory for result
+    realization = Vector{V}(undef, nelements(pdomain))
+
+    # pre-allocate memory for neighbors
+    neighbors = Vector{Int}(undef, maxneighbors)
+
+    # keep track of simulated locations
+    simulated = falses(nelements(pdomain))
+    for (loc, datloc) in mappings
+      realization[loc] = pdata[var][datloc]
+      simulated[loc] = true
+    end
+
+    # simulation loop
+    for location in traverse(pdomain, path)
+      if !simulated[location]
+        # coordinates of neighborhood center
+        pₒ = centroid(pdomain, location)
+
+        # find neighbors with previously simulated values
+        nneigh = search!(neighbors, pₒ, bsearcher, mask=simulated)
+
+        # choose between marginal and conditional distribution
+        if nneigh < minneighbors
+          # draw from marginal
+          realization[location] = rand(marginal)
+        else
+          # final set of neighbors
+          nview = view(neighbors, 1:nneigh)
+
+          # view neighborhood with data
+          dom = view(pdomain, nview)
+          tab = (; var => view(realization, nview))
+          𝒟 = georef(tab, dom)
+
+          # fit estimator to data
+          fitted = fit(estimator, 𝒟, var)
+
+          if status(fitted)
+            # estimate mean and variance
+            μ, σ² = predict(fitted, pₒ)
+
+            # draw from conditional
+            realization[location] = μ + √σ²*randn(V)
+          else
+            # draw from marginal
+            realization[location] = rand(marginal)
+          end
+        end
+
+        # mark location as simulated and continue
+        simulated[location] = true
+      end
+    end
+
+    var => realization
+  end
+
+  Dict(varreals)
+end
