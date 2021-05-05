@@ -16,7 +16,7 @@ Variography = "04a0146e-e6df-5636-8d7f-62fa9eb0b20c"
 
 [compat]
 CpuId = "0.2, 0.3"
-Distributions = "0.23, 0.24"
+Distributions = "0.23, 0.24, 0.25"
 FFTW = "1.2"
 GeoStatsBase = "0.21"
 KrigingEstimators = "0.7"
