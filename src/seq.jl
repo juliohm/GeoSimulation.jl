@@ -50,7 +50,7 @@ function preprocess(problem::SimulationProblem, solver::SeqSim)
 
       # determine neighbor search method
       neigh     = varparams.neighborhood
-      searcher  = NeighborhoodSearch(pdomain, neigh)
+      searcher  = BallSearch(pdomain, neigh)
       bsearcher = BoundedSearch(searcher, maxneighbors)
 
       # determine data mappings
