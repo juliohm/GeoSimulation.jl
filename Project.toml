@@ -1,7 +1,7 @@
 name = "GeoSimulation"
 uuid = "220efe8a-9139-4e14-a4fa-f683d572f4c5"
 authors = ["Júlio Hoffimann <julio.hoffimann@gmail.com> and contributors"]
-version = "0.3.4"
+version = "0.3.5"
 
 [deps]
 CpuId = "adafc99b-e345-5852-983c-f28acb93d879"
@@ -20,6 +20,6 @@ Distributions = "0.23, 0.24, 0.25"
 FFTW = "1.2"
 GeoStatsBase = "0.21"
 KrigingEstimators = "0.7"
-Meshes = "0.14"
+Meshes = "0.15"
 Variography = "0.12"
 julia = "1.5"
