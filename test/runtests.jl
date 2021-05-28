@@ -3,6 +3,7 @@ using Meshes
 using GeoStatsBase
 using Variography
 using Distributions
+using LinearAlgebra
 using Plots; gr(size=(600,400))
 using ReferenceTests, ImageIO
 using Test, Random

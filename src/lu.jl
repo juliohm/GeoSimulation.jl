@@ -9,9 +9,10 @@ LU Gaussian simulation.
 
 ## Parameters
 
-* `variogram` - Theoretical variogram (default to `GaussianVariogram()`)
-* `mean`      - Mean of unconditional simulation (default to `0`)
-* `mapping`   - Data mapping method (default to `NearestMapping()`)
+* `variogram`     - Theoretical variogram (default to `GaussianVariogram()`)
+* `mean`          - Mean of unconditional simulation (default to `0`)
+* `mapping`       - Data mapping method (default to `NearestMapping()`)
+* `factorization` - Factorization method (default to `cholesky`)
 
 ## Joint parameters
 
@@ -45,6 +46,7 @@ Oliver 2003. *Gaussian cosimulation: modeling of the cross-covariance.*
   @param variogram = GaussianVariogram()
   @param mean = nothing
   @param mapping = NearestMapping()
+  @param factorization = cholesky
   @jparam correlation = 0.0
 end
 
@@ -76,6 +78,9 @@ function preprocess(problem::SimulationProblem, solver::LUGS)
       # determine variogram model
       γ = varparams.variogram
 
+      # determine factorization method
+      fact = varparams.factorization
+
       # check stationarity
       @assert isstationary(γ) "variogram model must be stationary"
 
@@ -106,18 +111,18 @@ function preprocess(problem::SimulationProblem, solver::LUGS)
 
       if isempty(dlocs)
         d₂  = zero(V)
-        L₂₂ = cholesky(Symmetric(C₂₂)).L
+        L₂₂ = fact(Symmetric(C₂₂)).L
       else
         # covariance beween data locations
         C₁₁ = sill(γ) .- pairwise(γ, 𝒟d)
         C₁₂ = sill(γ) .- pairwise(γ, 𝒟d, 𝒟s)
 
-        L₁₁ = cholesky(Symmetric(C₁₁)).L
+        L₁₁ = fact(Symmetric(C₁₁)).L
         B₁₂ = L₁₁ \ C₁₂
         A₂₁ = B₁₂'
 
         d₂ = A₂₁ * (L₁₁ \ z₁)
-        L₂₂ = cholesky(Symmetric(C₂₂ - A₂₁*B₁₂)).L
+        L₂₂ = fact(Symmetric(C₂₂ - A₂₁*B₁₂)).L
       end
 
       if !isnothing(varparams.mean) && !isempty(dlocs)

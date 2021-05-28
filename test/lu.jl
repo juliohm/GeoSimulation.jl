@@ -43,4 +43,25 @@
   if visualtests
     @test_reference "data/LU-cosim.png" plot(solution,layout=(2,1))
   end
+
+  # ---------------------
+  # custom factorization
+  # ---------------------
+  𝒮 = georef((z=[0.,1.,0.,1.,0.],), [0. 25. 50. 75. 100.])
+  𝒟 = CartesianGrid(100)
+  problem = SimulationProblem(𝒮, 𝒟, :z, 1)
+  solver1 = LUGS(:z => (variogram=SphericalVariogram(range=10.),factorization=lu))
+  solver2 = LUGS(:z => (variogram=SphericalVariogram(range=10.),factorization=cholesky))
+
+  Random.seed!(2021)
+  solution1 = solve(problem, solver1)
+
+  Random.seed!(2021)
+  solution2 = solve(problem, solver2)
+
+  if visualtests
+    p1 = plot(solution1)
+    p2 = plot(solution2)
+    @test_reference "data/LU-factorization.png" plot(p1, p2, layout=(2,1))
+  end
 end
