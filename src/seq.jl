@@ -120,8 +120,8 @@ function solvesingle(problem::SimulationProblem, covars::NamedTuple, ::SeqSim, p
           nview = view(neighbors, 1:nneigh)
 
           # view neighborhood with data
-          dom = view(pdomain, nview)
           tab = (; var => view(realization, nview))
+          dom = view(pdomain, nview)
           𝒟 = georef(tab, dom)
 
           # fit estimator to data
