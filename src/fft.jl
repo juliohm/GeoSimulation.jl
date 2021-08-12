@@ -28,7 +28,7 @@ Fourier transform method.*
 end
 
 function preprocess(problem::SimulationProblem, solver::FFTGS)
-  hasdata(problem) && @warn "Conditional spectral Gaussian simulation is not currently supported"
+  hasdata(problem) && @warn "Conditional simulation is not implemented"
   
   # retrieve problem info
   pdomain = domain(problem)
