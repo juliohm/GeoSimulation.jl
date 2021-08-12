@@ -3,15 +3,15 @@
   𝒟 = CartesianGrid((100,100), (0.5,0.5), (1.0,1.0))
   N = 3
 
-  𝒫₁ = SimulationProblem(𝒮, 𝒟, :z, N)
-  𝒫₂ = SimulationProblem(𝒟, :z=>Float64, N)
+  problem₁ = SimulationProblem(𝒮, 𝒟, :z, N)
+  problem₂ = SimulationProblem(𝒟, :z=>Float64, N)
 
   solver = SGS(:z => (variogram=SphericalVariogram(range=35.),
                       neighborhood=NormBall(30.)))
 
   Random.seed!(2017)
-  sol₁ = solve(𝒫₁, solver)
-  sol₂ = solve(𝒫₂, solver)
+  sol₁ = solve(problem₁, solver)
+  sol₂ = solve(problem₂, solver)
 
   # basic checks
   reals = sol₁[:z]

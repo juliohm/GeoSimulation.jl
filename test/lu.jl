@@ -9,10 +9,10 @@
   solver = LUGS(:z => (variogram=SphericalVariogram(range=10.),))
 
   Random.seed!(2018)
-  solution = solve(problem, solver)
+  sol = solve(problem, solver)
 
   if visualtests
-    @test_reference "data/LU-condsim.png" plot(solution,layout=(2,1))
+    @test_reference "data/LU-condsim.png" plot(sol,layout=(2,1))
   end
 
   # ------------------------
@@ -22,10 +22,10 @@
   solver = LUGS(:z => (variogram=SphericalVariogram(range=10.),))
 
   Random.seed!(2018)
-  solution = solve(problem, solver)
+  sol = solve(problem, solver)
 
   if visualtests
-    @test_reference "data/LU-uncondsim.png" plot(solution,layout=(2,1))
+    @test_reference "data/LU-uncondsim.png" plot(sol,layout=(2,1))
   end
 
   # -------------
@@ -38,10 +38,10 @@
                 (:z,:y) => (correlation=0.95,))
 
   Random.seed!(2020)
-  solution = solve(problem, solver)
+  sol = solve(problem, solver)
 
   if visualtests
-    @test_reference "data/LU-cosim.png" plot(solution,layout=(2,1))
+    @test_reference "data/LU-cosim.png" plot(sol,layout=(2,1))
   end
 
   # ---------------------
