@@ -32,10 +32,10 @@ function preprocess(problem::SimulationProblem, solver::FFTGS)
   
   # retrieve problem info
   pdomain = domain(problem)
-  npts = nelements(pdomain)
-  dims = size(pdomain)
-  center = CartesianIndex(dims .÷ 2)
-  c = LinearIndices(dims)[center]
+  dims    = size(pdomain)
+  nelms   = nelements(pdomain)
+  center  = CartesianIndex(dims .÷ 2)
+  cindex  = LinearIndices(dims)[center]
 
   # number of threads in FFTW
   FFTW.set_num_threads(solver.threads)
@@ -60,9 +60,9 @@ function preprocess(problem::SimulationProblem, solver::FFTGS)
       # check stationarity
       @assert isstationary(γ) "variogram model must be stationary"
 
-      # compute covariances between centroid and all locations
-      𝒟c = view(pdomain, [c])
-      𝒟p = view(pdomain, 1:npts)
+      # compute covariances between centroid and all points
+      𝒟c = [centroid(pdomain, cindex)]
+      𝒟p = [centroid(pdomain, eindex) for eindex in 1:nelms]
       covs = sill(γ) .- pairwise(γ, 𝒟c, 𝒟p)
       C = reshape(covs, dims)
 
@@ -81,7 +81,7 @@ end
 function solvesingle(problem::SimulationProblem, covars::NamedTuple, ::FFTGS, preproc)
   # retrieve problem info
   pdomain = domain(problem)
-  dims = size(pdomain)
+  dims    = size(pdomain)
 
   mactypeof = Dict(name(v) => mactype(v) for v in variables(problem))
 
