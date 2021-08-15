@@ -79,6 +79,9 @@ function solvesingle(problem::SimulationProblem, covars::NamedTuple, ::SeqSim, p
   pdata = data(problem)
   pdomain = domain(problem)
 
+  # compute variogram between centroids
+  pset = PointSet(centroid.(pdomain))
+
   mactypeof = Dict(name(v) => mactype(v) for v in variables(problem))
 
   varreals = map(covars.names) do var
@@ -121,15 +124,18 @@ function solvesingle(problem::SimulationProblem, covars::NamedTuple, ::SeqSim, p
 
           # view neighborhood with data
           tab = (; var => view(realization, nview))
-          dom = view(pdomain, nview)
-          𝒟 = georef(tab, dom)
+          dom = view(pset, nview)
+          𝒟   = georef(tab, dom)
 
           # fit estimator to data
           fitted = fit(estimator, 𝒟, var)
 
           if status(fitted)
+            # retrieve element
+            uₒ = pdomain[location]
+
             # estimate mean and variance
-            μ, σ² = predict(fitted, pₒ)
+            μ, σ² = predict(fitted, uₒ)
 
             # draw from conditional
             realization[location] = μ + √σ²*randn(V)
