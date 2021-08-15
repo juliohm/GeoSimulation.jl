@@ -103,8 +103,8 @@ function preprocess(problem::SimulationProblem, solver::LUGS)
       slocs = [l for l in 1:nelements(pdomain) if l ∉ dlocs]
 
       # create views of the domain
-      𝒟d = view(pdomain, dlocs)
-      𝒟s = view(pdomain, slocs)
+      𝒟d = [centroid(pdomain, i) for i in dlocs]
+      𝒟s = [centroid(pdomain, i) for i in slocs]
 
       # covariance between simulation locations
       C₂₂ = sill(γ) .- pairwise(γ, 𝒟s)
