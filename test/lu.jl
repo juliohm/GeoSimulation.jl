@@ -44,6 +44,20 @@
     @test_reference "data/LU-cosim.png" plot(sol,layout=(2,1))
   end
 
+  # -----------
+  # 2D example
+  # -----------
+  𝒟 = CartesianGrid(100,100)
+  problem = SimulationProblem(𝒟, :z=>Float64, 3)
+
+  Random.seed!(2021)
+  solver = LUGS(:z => (variogram=GaussianVariogram(range=10.),))
+  sol = solve(problem, solver)
+
+  if visualtests
+    @test_reference "data/LU-2D.png" plot(sol,size=(900,300))
+  end
+
   # ---------------------
   # custom factorization
   # ---------------------
