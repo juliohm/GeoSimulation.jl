@@ -128,14 +128,14 @@ function solvesingle(problem::SimulationProblem, covars::NamedTuple, ::SeqSim, p
           𝒟   = georef(tab, dom)
 
           # fit estimator to data
-          fitted = fit(estimator, 𝒟, var)
+          fitted = fit(estimator, 𝒟)
 
           if status(fitted)
             # retrieve element
             uₒ = pdomain[location]
 
             # estimate mean and variance
-            μ, σ² = predict(fitted, uₒ)
+            μ, σ² = predict(fitted, var, uₒ)
 
             # draw from conditional
             realization[location] = μ + √σ²*randn(V)

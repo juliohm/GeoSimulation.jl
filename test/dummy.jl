@@ -7,8 +7,8 @@ import GeoStatsBase: fit, predict, status
 struct DummyEstimator end
 struct FittedDummyEstimator end
 
-fit(::DummyEstimator, data, var) = FittedDummyEstimator()
-predict(::FittedDummyEstimator, pₒ) = (0, 1)
+fit(::DummyEstimator, data) = FittedDummyEstimator()
+predict(::FittedDummyEstimator, var, pₒ) = (0, 1)
 status(::FittedDummyEstimator) = true
 
 # ------------------------
