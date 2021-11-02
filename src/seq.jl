@@ -15,7 +15,7 @@ and in case there are none, use a `marginal` distribution.
 ## Parameters
 
 * `estimator`    - CDF estimator
-* `neighborhood` - Spatial neighborhood
+* `neighborhood` - Geospatial neighborhood
 * `maxneighbors` - Maximum number of neighbors
 * `marginal`     - Marginal distribution
 * `path`         - Simulation path
