@@ -7,7 +7,7 @@
   problem₂ = SimulationProblem(𝒟, :z=>Float64, N)
 
   solver = SGS(:z => (variogram=SphericalVariogram(range=35.),
-                      neighborhood=NormBall(30.)))
+                      neighborhood=MetricBall(30.)))
 
   Random.seed!(2017)
   sol₁ = solve(problem₁, solver)

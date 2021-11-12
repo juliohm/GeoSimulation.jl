@@ -11,7 +11,8 @@
   end
 
   Random.seed!(2019)
-  solver = FFTGS(:z => (variogram=GaussianVariogram(distance=aniso2distance([20.,5.],[0.])),))
+  distance = metric(MetricBall((20.,5.)))
+  solver = FFTGS(:z => (variogram=GaussianVariogram(distance=distance),))
   sol = solve(problem, solver)
 
   if visualtests

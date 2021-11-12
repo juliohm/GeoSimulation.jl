@@ -7,7 +7,7 @@
   prob2 = SimulationProblem(sdata, sgrid, :z, 3)
 
   solver = SeqSim(:z => (estimator=DummyEstimator(),
-                         neighborhood=NormBall(10.),
+                         neighborhood=MetricBall(10.),
                          minneighbors=1, maxneighbors=10,
                          marginal=Normal(), path=RandomPath(),
                          mapping=NearestMapping()))
