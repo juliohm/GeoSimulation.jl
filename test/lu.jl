@@ -58,6 +58,21 @@
     @test_reference "data/LU-2D.png" plot(sol,size=(900,300))
   end
 
+  # -------------------
+  # anisotropy example
+  # -------------------
+  𝒟 = CartesianGrid(100,100)
+  problem = SimulationProblem(𝒟, :z=>Float64, 3)
+
+  Random.seed!(2021)
+  ball = MetricBall((20.,5.))
+  solver = LUGS(:z => (variogram=GaussianVariogram(ball),))
+  sol = solve(problem, solver)
+
+  if visualtests
+    @test_reference "data/LU-2D-aniso.png" plot(sol,size=(900,300))
+  end
+
   # ---------------------
   # custom factorization
   # ---------------------
