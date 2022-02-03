@@ -18,8 +18,8 @@ FFT Gaussian simulation.
 
 ### References
 
-Gutjahr 1997. *General joint conditional simulations using a fast
-Fourier transform method.*
+* Gutjahr 1997. [General joint conditional simulations using a fast
+Fourier transform method](https://link.springer.com/article/10.1007/BF02769641)
 """
 @simsolver FFTGS begin
   @param variogram = GaussianVariogram()

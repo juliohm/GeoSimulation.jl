@@ -30,8 +30,8 @@ The neighbors are searched according to a `neighborhood`.
 
 ### References
 
-Gomez-Hernandez & Journel 1993. *Joint Sequential Simulation of
-MultiGaussian Fields*
+* Gomez-Hernandez & Journel 1993. [Joint Sequential Simulation of
+  MultiGaussian Fields](https://link.springer.com/chapter/10.1007/978-94-011-1739-5_8)
 """
 @simsolver SGS begin
   @param variogram = GaussianVariogram()

@@ -37,10 +37,12 @@ julia> LUGS(:var₁ => (variogram=SphericalVariogram(),mean=10.),
 
 ### References
 
-Alabert 1987. *The practice of fast conditional simulations through the
-LU decomposition of the covariance matrix.*
+* Alabert 1987. [The practice of fast conditional simulations
+  through the LU decomposition of the covariance matrix]
+  (https://link.springer.com/article/10.1007/BF00897191)
 
-Oliver 2003. *Gaussian cosimulation: modeling of the cross-covariance.*
+* Oliver 2003. [Gaussian cosimulation: modeling of the cross-covariance]
+  (https://link.springer.com/article/10.1023%2FB%3AMATG.0000002984.56637.ef)
 """
 @simsolver LUGS begin
   @param variogram = GaussianVariogram()
