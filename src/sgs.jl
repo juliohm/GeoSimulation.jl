@@ -43,6 +43,7 @@ The neighbors are searched according to a `neighborhood`.
   @param maxneighbors = 10
   @param path = nothing
   @param mapping = NearestMapping()
+  @global rng = Random.GLOBAL_RNG
 end
 
 function preprocess(problem::SimulationProblem, solver::SGS)
@@ -90,5 +91,5 @@ function preprocess(problem::SimulationProblem, solver::SGS)
   preprocess(problem, SeqSim(params...))
 end
 
-solvesingle(problem::SimulationProblem, covars::NamedTuple, ::SGS, preproc) =
-  solvesingle(problem, covars, SeqSim(), preproc)
+solvesingle(problem::SimulationProblem, covars::NamedTuple, solver::SGS, preproc) =
+  solvesingle(problem, covars, SeqSim(rng=solver.rng), preproc)

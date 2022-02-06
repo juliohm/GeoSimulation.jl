@@ -6,13 +6,13 @@
   prob1 = SimulationProblem(sgrid, :z => Float64, 3)
   prob2 = SimulationProblem(sdata, sgrid, :z, 3)
 
+  rng = MersenneTwister(123)
   solver = SeqSim(:z => (estimator=DummyEstimator(),
                          neighborhood=MetricBall(10.),
                          minneighbors=1, maxneighbors=10,
                          marginal=Normal(), path=RandomPath(),
-                         mapping=NearestMapping()))
+                         mapping=NearestMapping()), rng=rng)
 
-  Random.seed!(1234)
   usol = solve(prob1, solver)
   csol = solve(prob2, solver)
 

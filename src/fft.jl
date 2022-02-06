@@ -25,6 +25,7 @@ Fourier transform method](https://link.springer.com/article/10.1007/BF02769641)
   @param variogram = GaussianVariogram()
   @param mean = 0.0
   @global threads = cpucores()
+  @global rng = Random.GLOBAL_RNG
 end
 
 function preprocess(problem::SimulationProblem, solver::FFTGS)
@@ -78,7 +79,10 @@ function preprocess(problem::SimulationProblem, solver::FFTGS)
   preproc
 end
 
-function solvesingle(problem::SimulationProblem, covars::NamedTuple, ::FFTGS, preproc)
+function solvesingle(problem::SimulationProblem, covars::NamedTuple, solver::FFTGS, preproc)
+  # random number generator
+  rng = solver.rng
+
   # retrieve problem info
   pdomain = domain(problem)
   dims    = size(pdomain)
@@ -93,7 +97,7 @@ function solvesingle(problem::SimulationProblem, covars::NamedTuple, ::FFTGS, pr
     V = mactypeof[var]
 
     # perturbation in frequency domain
-    P = F .* exp.(im .* angle.(fft(rand(V, dims))))
+    P = F .* exp.(im .* angle.(fft(rand(rng, V, dims))))
 
     # move back to time domain
     Z = real(ifft(P))

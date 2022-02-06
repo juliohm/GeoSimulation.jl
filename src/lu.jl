@@ -50,6 +50,7 @@ julia> LUGS(:var₁ => (variogram=SphericalVariogram(),mean=10.),
   @param mapping = NearestMapping()
   @param factorization = cholesky
   @jparam correlation = 0.0
+  @global rng = Random.GLOBAL_RNG
 end
 
 function preprocess(problem::SimulationProblem, solver::LUGS)
@@ -161,25 +162,28 @@ end
 
 function solvesingle(::SimulationProblem, covars::NamedTuple,
                      solver::LUGS, preproc)
+  # random number generator
+  rng = solver.rng
+
   # preprocessed parameters
   conames = covars.names
   params = preproc[conames]
 
   # simulate first variable
-  Y₁, w₁ = lusim(params[1])
+  Y₁, w₁ = lusim(rng, params[1])
   result = Dict(conames[1] => Y₁)
 
   # simulate second variable
   if length(conames) == 2
     ρ = params[3][1]
-    Y₂, w₂ = lusim(params[2], ρ, w₁)
+    Y₂, w₂ = lusim(rng, params[2], ρ, w₁)
     push!(result, conames[2] => Y₂)
   end
 
   result
 end
 
-function lusim(params, ρ=nothing, w₁=nothing)
+function lusim(rng, params, ρ=nothing, w₁=nothing)
   # unpack parameters
   z₁, d₂, L₂₂, μ, dlocs, slocs = params
 
@@ -190,7 +194,7 @@ function lusim(params, ρ=nothing, w₁=nothing)
   y = Vector{eltype(z₁)}(undef, npts)
 
   # conditional simulation
-  w₂ = randn(size(L₂₂, 2))
+  w₂ = randn(rng, size(L₂₂, 2))
   if isnothing(ρ)
     y₂ = d₂ .+ L₂₂*w₂
   else

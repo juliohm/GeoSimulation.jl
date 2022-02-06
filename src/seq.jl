@@ -29,6 +29,7 @@ and in case there are none, use a `marginal` distribution.
   @param marginal
   @param path
   @param mapping
+  @global rng
 end
 
 function preprocess(problem::SimulationProblem, solver::SeqSim)
@@ -74,7 +75,10 @@ function preprocess(problem::SimulationProblem, solver::SeqSim)
   preproc
 end
 
-function solvesingle(problem::SimulationProblem, covars::NamedTuple, ::SeqSim, preproc)
+function solvesingle(problem::SimulationProblem, covars::NamedTuple, solver::SeqSim, preproc)
+  # random number generator
+  rng = solver.rng
+
   # retrieve problem info
   pdata = data(problem)
   pdomain = domain(problem)
@@ -117,7 +121,7 @@ function solvesingle(problem::SimulationProblem, covars::NamedTuple, ::SeqSim, p
         # choose between marginal and conditional distribution
         if nneigh < minneighbors
           # draw from marginal
-          realization[location] = rand(marginal)
+          realization[location] = rand(rng, marginal)
         else
           # final set of neighbors
           nview = view(neighbors, 1:nneigh)
@@ -138,10 +142,10 @@ function solvesingle(problem::SimulationProblem, covars::NamedTuple, ::SeqSim, p
             μ, σ² = predict(fitted, var, uₒ)
 
             # draw from conditional
-            realization[location] = μ + √σ²*randn(V)
+            realization[location] = μ + √σ²*randn(rng, V)
           else
             # draw from marginal
-            realization[location] = rand(marginal)
+            realization[location] = rand(rng, marginal)
           end
         end
 

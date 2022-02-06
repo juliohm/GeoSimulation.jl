@@ -12,6 +12,7 @@ using KrigingEstimators
 using Distributions
 using LinearAlgebra
 using Statistics
+using Random
 using FFTW
 using CpuId
 
@@ -28,7 +29,9 @@ export
   SeqSim,
 
   # concrete solvers
-  LUGS, FFTGS, SGS,
+  LUGS,
+  FFTGS,
+  SGS,
 
   # meta solvers
   CookieCutter
