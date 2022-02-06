@@ -20,6 +20,10 @@ and in case there are none, use a `marginal` distribution.
 * `marginal`     - Marginal distribution
 * `path`         - Simulation path
 * `mapping`      - Data mapping method
+
+## Global parameters
+
+* `rng` - random number generator
 """
 @simsolver SeqSim begin
   @param estimator

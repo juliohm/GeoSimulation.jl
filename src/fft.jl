@@ -15,6 +15,7 @@ FFT Gaussian simulation.
 ## Global parameters
 
 * `threads` - number of threads in FFT (default to all physical cores)
+* `rng` - random number generator (default to `Random.GLOBAL_RNG`)
 
 ### References
 

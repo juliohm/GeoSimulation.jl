@@ -18,6 +18,10 @@ LU Gaussian simulation.
 
 * `correlation` - correlation coefficient between two covariates (default to `0`).
 
+## Global parameters
+
+* `rng` - random number generator (default to `Random.GLOBAL_RNG`)
+
 ## Examples
 
 Simulate two variables `var₁` and `var₂` independently:
