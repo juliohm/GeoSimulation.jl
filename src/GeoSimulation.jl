@@ -9,10 +9,12 @@ using GeoStatsBase
 using Variography
 using KrigingEstimators
 
+using SpecialFunctions
 using Distributions
 using LinearAlgebra
 using Statistics
 using Random
+using Tables
 using FFTW
 using CpuId
 
@@ -22,6 +24,7 @@ include("lu.jl")
 include("fft.jl")
 include("seq.jl")
 include("sgs.jl")
+include("spde.jl")
 include("cookie.jl")
 
 export
@@ -32,6 +35,7 @@ export
   LUGS,
   FFTGS,
   SGS,
+  SPDEGS,
 
   # meta solvers
   CookieCutter
