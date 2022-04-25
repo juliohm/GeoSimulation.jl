@@ -26,6 +26,7 @@ testfiles = [
   "fft.jl",
   "seq.jl",
   "sgs.jl",
+  "spde.jl",
   "cookie.jl"
 ]
 
