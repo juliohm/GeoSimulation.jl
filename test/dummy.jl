@@ -1,4 +1,4 @@
-import GeoStatsBase: fit, predict, status
+import GeoStatsBase: fit, predict, predictprob, status
 
 # ----------------
 # DUMMY ESTIMATOR
@@ -9,6 +9,7 @@ struct FittedDummyEstimator end
 
 fit(::DummyEstimator, data) = FittedDummyEstimator()
 predict(::FittedDummyEstimator, var, pₒ) = (0, 1)
+predictprob(::FittedDummyEstimator, var, pₒ) = Normal(0, 1)
 status(::FittedDummyEstimator) = true
 
 # ------------------------

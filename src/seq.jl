@@ -142,11 +142,11 @@ function solvesingle(problem::SimulationProblem, covars::NamedTuple, solver::Seq
             # retrieve element
             uₒ = pdomain[location]
 
-            # estimate mean and variance
-            μ, σ² = predict(fitted, var, uₒ)
+            # local conditional distribution
+            conditional = predictprob(fitted, var, uₒ)
 
             # draw from conditional
-            realization[location] = μ + √σ²*randn(rng, V)
+            realization[location] = rand(rng, conditional)
           else
             # draw from marginal
             realization[location] = rand(rng, marginal)
