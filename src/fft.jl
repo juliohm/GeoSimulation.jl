@@ -23,8 +23,8 @@ FFT Gaussian simulation.
 Fourier transform method](https://link.springer.com/article/10.1007/BF02769641)
 """
 @simsolver FFTGS begin
-  @param variogram = GaussianVariogram()
-  @param mean = 0.0
+  @param  variogram = GaussianVariogram()
+  @param  mean = 0.0
   @global threads = cpucores()
   @global rng = Random.GLOBAL_RNG
 end
@@ -33,11 +33,12 @@ function preprocess(problem::SimulationProblem, solver::FFTGS)
   hasdata(problem) && @error "conditional simulation is not implemented"
   
   # retrieve problem info
-  pdomain = domain(problem)
-  dims    = size(pdomain)
-  nelms   = nelements(pdomain)
-  center  = CartesianIndex(dims .÷ 2)
-  cindex  = LinearIndices(dims)[center]
+  pdomain  = domain(problem)
+  pgrid, _ = unview(pdomain)
+  dims     = size(pgrid)
+  nelms    = nelements(pgrid)
+  center   = CartesianIndex(dims .÷ 2)
+  cindex   = LinearIndices(dims)[center]
 
   # number of threads in FFTW
   FFTW.set_num_threads(solver.threads)
@@ -63,8 +64,8 @@ function preprocess(problem::SimulationProblem, solver::FFTGS)
       @assert isstationary(γ) "variogram model must be stationary"
 
       # compute covariances between centroid and all points
-      𝒟c = [centroid(pdomain, cindex)]
-      𝒟p = [centroid(pdomain, eindex) for eindex in 1:nelms]
+      𝒟c = [centroid(pgrid, cindex)]
+      𝒟p = [centroid(pgrid, eindex) for eindex in 1:nelms]
       covs = sill(γ) .- pairwise(γ, 𝒟c, 𝒟p)
       C = reshape(covs, dims)
 
@@ -85,8 +86,9 @@ function solvesingle(problem::SimulationProblem, covars::NamedTuple, solver::FFT
   rng = solver.rng
 
   # retrieve problem info
-  pdomain = domain(problem)
-  dims    = size(pdomain)
+  pdomain     = domain(problem)
+  pgrid, inds = unview(pdomain)
+  dims        = size(pgrid)
 
   mactypeof = Dict(name(v) => mactype(v) for v in variables(problem))
 
@@ -108,7 +110,7 @@ function solvesingle(problem::SimulationProblem, covars::NamedTuple, solver::FFT
     Z .= √(sill(γ) / σ²) .* Z .+ μ
 
     # flatten result
-    var => vec(Z)
+    var => Z[inds]
   end
 
   Dict(varreal)
